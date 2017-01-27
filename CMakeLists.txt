@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project (epics_fetcher)
 
+set (CMAKE_CXX_STANDARD 11)
 
 set(tgt epics_fetcher)
 

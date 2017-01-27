@@ -7,6 +7,15 @@ using namespace epics::pvData;
 using namespace epics::pvAccess;
 using namespace epics::pvaClient;
 
+template <typename T>
+class NTScalar {
+    public:
+        static void getValue(PVStructurePtr& pvStruct) {
+            auto valField = pvStruct->getSubField<epics::pvData::PVScalarValue<T>>("value");
+            std::cout << "    Value: " << valField->get() << std::endl;
+        }
+};
+
 int main(int argc,char *argv[])
 {
     PvaClientPtr pva = PvaClient::create();
@@ -17,7 +26,7 @@ int main(int argc,char *argv[])
     // Do some introspection to find out details
 
     PVStructurePtr pv_structure = channel->get()->getData()->getPVStructure();
-    // This doesn't do what I expect!
+    // This didn't do what I expect!
     // std::cout << "Name = " << pv_structure->getFullName() << std::endl;
 
     StructureConstPtr structure = pv_structure->getStructure();
@@ -41,9 +50,7 @@ int main(int argc,char *argv[])
 
     // Using PVStructure
     std::cout << "  Using PvaClientGetDataPtr" << std::endl;
-    PVDoublePtr valSubfield = pv_structure->getSubField<epics::pvData::PVScalarValue<double>>("value");
-    //PVDoublePtr valueField(static_cast<epics::pvData::PVScalarValue<double>*>(valSubfield.get()));
-    std::cout << "    Value: " << valSubfield->get() << std::endl;
+    NTScalar<double>::getValue(pv_structure);
 
     PVStructurePtr tsStructure = pv_structure->getSubField<PVStructure>("timeStamp");
     auto tsField = tsStructure->getSubField<PVScalarValue<int64_t>>("secondsPastEpoch");
@@ -51,6 +58,7 @@ int main(int argc,char *argv[])
 
     
     // Use PvaClientGetData instead - easier to get timestamp this way?
+    // However, it is synchronous
     std::cout << "  Using PvaClientGetDataPtr" << std::endl;
     PvaClientGetDataPtr get = channel->get()->getData();
     

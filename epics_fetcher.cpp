@@ -49,7 +49,7 @@ int main(int argc,char *argv[])
     std::cout << std::endl << "Data Values" << std::endl;
 
     // Using PVStructure
-    std::cout << "  Using PvaClientGetDataPtr" << std::endl;
+    std::cout << "  Using PVStructurePtr" << std::endl;
     NTScalar<double>::getValue(pv_structure);
 
     PVStructurePtr tsStructure = pv_structure->getSubField<PVStructure>("timeStamp");
